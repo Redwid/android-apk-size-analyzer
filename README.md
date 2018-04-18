@@ -12,7 +12,7 @@ Needs to modify usage of dex2jar script from sh to bat.
 
 You could use it to find out how compiler converts your classes.
 
-##Usage 
+##### Usage 
 
 java ApkSizeAnalyzer /path/to/your/apk/file.apk
 In project /tmp folder app will unzip that application.
