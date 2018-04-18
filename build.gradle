@@ -1,0 +1,22 @@
+apply plugin: 'maven'
+apply plugin: 'java'
+
+dependencies {
+}
+
+repositories {
+    jcenter()
+    mavenLocal()
+}
+
+group = 'org.redwid.tools'
+description = 'android-apk-size-analyzer'
+
+version = '1.0.0'
+
+/**
+ * Generate gradle wrapper
+ */
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.5'
+}
