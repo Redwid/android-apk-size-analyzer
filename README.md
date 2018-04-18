@@ -1,9 +1,9 @@
 # android-apk-size-analyzer
 What is doing: unzips resources, decompiles DEX and android manifest file and creates a tree of files counts and sizes per directory.
 
-For DEX decompilation tool using this: https://sourceforge.net/projects/dex2jar/
+For DEX decompilation tool using this tool: https://sourceforge.net/projects/dex2jar/
 
-For XML decompilation tool using this: AXMLPrinter2.
+For XML decompilation tool using this tool: AXMLPrinter2.
 
 Both tools already included into the project
 
@@ -16,8 +16,7 @@ You could use it to find out how compiler converts your classes.
 
 java ApkSizeAnalyzer /path/to/your/apk/file.apk
 
-In project /tmp folder app will unzip that application.
+The unzipped apk resources will be placed in project /tmp folder.
 
-To decompile class file you could use JD-GUI app: 
 
-http://jd.benow.ca/
+To decompile class file you could use JD-GUI app: http://jd.benow.ca/
