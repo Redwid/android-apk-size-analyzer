@@ -12,7 +12,7 @@ Needs to modify usage of dex2jar script from sh to bat.
 
 You could use it to find out how compiler converts your classes.
 
-### Usage 
+## Usage 
 
 java ApkSizeAnalyzer /path/to/your/apk/file.apk
 
@@ -20,3 +20,6 @@ The unzipped apk resources will be placed in project /tmp folder.
 
 
 To decompile class file you could use JD-GUI app: http://jd.benow.ca/
+
+## License
+[Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
