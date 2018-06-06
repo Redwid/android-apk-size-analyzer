@@ -19,7 +19,7 @@ public class ApkSizeAnalyzer {
     public static void main(String[] args) {
         if(args.length == 0) {
             System.err.println("Error no apk file specified!");
-            System.err.println("Usage: ApkSizeAnalyzer /path/to/your/apk/file.apk");
+            System.err.println("Usage: ApkSizeAnalyzer /path/to/your/apk/file.apk(*.aar)");
             return;
         }
         final ApkSizeAnalyzer apkSizeAnalyzer = new ApkSizeAnalyzer();
@@ -118,15 +118,20 @@ public class ApkSizeAnalyzer {
 
         list = tmpDir.listFiles();
         for(File file: list) {
-            if(file.getName().endsWith("_dex2jar.jar")) {
-                try {
-                    unzipUtility.unzip(file.getAbsolutePath(), "tmp/src/");
-                    deleteFile(file);
-                } catch (IOException e) {
-                    System.err.println("Unable to unzip file: " + file.getAbsolutePath());
-                    e.printStackTrace();
-                }
+            if(file.getName().endsWith("_dex2jar.jar") ||
+               file.getName().endsWith("classes.jar")) { //For aar packages
+                unzipJar(file);
             }
+        }
+    }
+
+    private void unzipJar(File file) {
+        try {
+            unzipUtility.unzip(file.getAbsolutePath(), "tmp/src/");
+            deleteFile(file);
+        } catch (IOException e) {
+            System.err.println("Unable to unzip file: " + file.getAbsolutePath());
+            e.printStackTrace();
         }
     }
 

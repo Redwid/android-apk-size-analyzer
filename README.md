@@ -14,7 +14,7 @@ You could use it to find out how compiler converts your classes.
 
 ## Usage 
 
-java ApkSizeAnalyzer /path/to/your/apk/file.apk
+java ApkSizeAnalyzer /path/to/your/apk/file.apk(*.aar) 
 
 The unzipped apk resources will be placed in project /tmp folder.
 
