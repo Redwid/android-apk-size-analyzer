@@ -18,5 +18,5 @@ version = '1.0.0'
  * Generate gradle wrapper
  */
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.5'
+    gradleVersion = '4.8'
 }
