@@ -8,7 +8,7 @@ import java.text.DecimalFormat;
  */
 public class ApkSizeAnalyzer {
 
-    private final static String DEX_2_JAR_SCRIPT = "sh tools/dex2jar/dex2jar.sh";
+    private final static String DEX_2_JAR_SCRIPT = "sh ../tools/dex2jar/d2j-dex2jar.sh ";
     private final static String AXML_PRINTER_2_SCRIPT = "java -jar tools/axml_printer2/axmlprinter-0.1.7.jar";
 
     private boolean rootFolder = true;
@@ -25,6 +25,8 @@ public class ApkSizeAnalyzer {
         final ApkSizeAnalyzer apkSizeAnalyzer = new ApkSizeAnalyzer();
         if(apkSizeAnalyzer.unzipApkFile(args[0])) {
             apkSizeAnalyzer.convertBinaryXmlFile("tmp/AndroidManifest.xml");
+            apkSizeAnalyzer.convertBinaryXmlFile("tmp/res/xml/authenticator.xml");
+            //apkSizeAnalyzer.convertBinaryXmlFile("tmp/res/layout/auth_att_msisdn_mismatch_activity.xml");
             //You could convert any xml layout file by using that pattern
             //apkSizeAnalyzer.convertBinaryXmlFile("tmp/res/layout/your_xml_layout.xml");
             apkSizeAnalyzer.dexDecode();
@@ -103,13 +105,19 @@ public class ApkSizeAnalyzer {
             if(file.getName().endsWith(".dex")) {
                 System.out.println("    decoding: " + file.getAbsolutePath());
                 try {
-                    final Process process = Runtime.getRuntime().exec(DEX_2_JAR_SCRIPT + " " + file.getAbsolutePath());
+                    final Process process = Runtime.getRuntime().exec(DEX_2_JAR_SCRIPT + " " + file.getAbsolutePath(), null, tmpDir);
                     final BufferedReader stdOut = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    String s;
-                    while((s = stdOut.readLine())!=null){
-                        //System.out.println(s);
+                    final BufferedReader errOut = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+                    String s = null, e = null;
+                    while((s = stdOut.readLine())!=null || (e = errOut.readLine())!=null){
+                        if(s != null) {
+                            System.out.println(s);
+                        }
+                        if(e != null) {
+                            System.err.println(e);
+                        }
                     }
-                    deleteFile(file);
+                    //deleteFile(file);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -118,7 +126,7 @@ public class ApkSizeAnalyzer {
 
         list = tmpDir.listFiles();
         for(File file: list) {
-            if(file.getName().endsWith("_dex2jar.jar") ||
+            if(file.getName().endsWith("-dex2jar.jar") ||
                file.getName().endsWith("classes.jar")) { //For aar packages
                 unzipJar(file);
             }
