@@ -1,15 +1,17 @@
-apply plugin: 'java'
+apply plugin: 'application'
 
 group = 'org.redwid.tools'
 description = 'android-apk-size-analyzer'
 
-version = '1.0.1'
-
-dependencies {
-}
+version = '1.1.0'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
+    google()
     mavenCentral()
-    mavenLocal()
 }
 
+application {
+    mainClass = System.getProperty("mainClass", 'org.redwid.tools.ApkSizeAnalyzer')
+}

@@ -1,14 +1,17 @@
 package org.redwid.tools;
 
 import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.DecimalFormat;
+import java.util.Locale;
 
 /**
  * Created by Redwid
  */
 public class ApkSizeAnalyzer {
 
-    private final static String DEX_2_JAR_SCRIPT = "sh ../tools/dex2jar/d2j-dex2jar.sh ";
+    private final static String DEX_2_JAR_SCRIPT = "sh ../tools/dex-tools-v2.4/d2j-dex2jar.sh ";
     private final static String AXML_PRINTER_2_SCRIPT = "java -jar tools/axml_printer2/axmlprinter-0.1.7.jar";
 
     private boolean rootFolder = true;
@@ -25,7 +28,7 @@ public class ApkSizeAnalyzer {
         final ApkSizeAnalyzer apkSizeAnalyzer = new ApkSizeAnalyzer();
         if(apkSizeAnalyzer.unzipApkFile(args[0])) {
             apkSizeAnalyzer.convertBinaryXmlFile("tmp/AndroidManifest.xml");
-            apkSizeAnalyzer.convertBinaryXmlFile("tmp/res/xml/authenticator.xml");
+            //apkSizeAnalyzer.convertBinaryXmlFile("tmp/res/xml/authenticator.xml");
             //apkSizeAnalyzer.convertBinaryXmlFile("tmp/res/layout/auth_att_msisdn_mismatch_activity.xml");
             //You could convert any xml layout file by using that pattern
             //apkSizeAnalyzer.convertBinaryXmlFile("tmp/res/layout/your_xml_layout.xml");
@@ -44,6 +47,24 @@ public class ApkSizeAnalyzer {
      */
     protected boolean unzipApkFile(String filePath) {
         System.out.println("unzipApkFile(" + filePath + ")");
+
+        if(filePath == null || filePath.toLowerCase(Locale.ROOT).startsWith("http://")
+                || filePath.toLowerCase(Locale.ROOT).startsWith("https://")) {
+            String fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
+            File downloadDir = new File("build/tmp");
+            if(!downloadDir.exists()) {
+                downloadDir.mkdirs();
+            }
+            try {
+                String newFilePath = downloadDir.getAbsolutePath() + "/" + fileName;
+                downloadFile(filePath, newFilePath);
+                filePath = newFilePath;
+            } catch (Exception e) {
+                System.err.println("Unable to download file: " + filePath);
+                e.printStackTrace();
+                return false;
+            }
+        }
 
         final File apkFile = new File(filePath);
         if(apkFile.exists()) {
@@ -130,12 +151,20 @@ public class ApkSizeAnalyzer {
                file.getName().endsWith("classes.jar")) { //For aar packages
                 unzipJar(file);
             }
+
+            if(file.getName().toLowerCase(Locale.ROOT).equals("lint.jar")) {
+                unzipJar(file, "tmp/lint-jar");
+            }
         }
     }
 
     private void unzipJar(File file) {
+        unzipJar(file, "tmp/src/");
+    }
+
+    private void unzipJar(File file, String destDirectory) {
         try {
-            unzipUtility.unzip(file.getAbsolutePath(), "tmp/src/");
+            unzipUtility.unzip(file.getAbsolutePath(), destDirectory);
             deleteFile(file);
         } catch (IOException e) {
             System.err.println("Unable to unzip file: " + file.getAbsolutePath());
@@ -302,5 +331,21 @@ public class ApkSizeAnalyzer {
         else {
             f.delete();
         }
+    }
+
+    private void downloadFile(String urlString, String destinationPath) throws Exception {
+        final URL url = new URL(urlString);
+        final URLConnection connection = url.openConnection();
+        final InputStream inputStream = connection.getInputStream();
+        final FileOutputStream outputStream = new FileOutputStream(destinationPath);
+
+        byte[] buffer = new byte[4096];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+
+        outputStream.close();
+        inputStream.close();
     }
 }
